@@ -47,7 +47,7 @@ module Delayed
           queue_column = arel_table[:queue]
 
           queues_to_use = queues - not_queues
-
+          # rubocop:disable Layout/LineLength
           # if there's anything in this collection, we're only pulling from those queues, and nothing else (including the "null" queue)
           if queues_to_use.any?
             where(queue: queues_to_use)
@@ -55,6 +55,7 @@ module Delayed
           elsif not_queues.any?
             where(queue_column.not_in(not_queues).or(queue_column.eq nil))
           end
+          # rubocop:enable Layout/LineLength
         }
 
         before_save :set_default_run_at
