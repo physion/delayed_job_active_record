@@ -33,6 +33,14 @@ module Delayed
       class Job < ::ActiveRecord::Base
         include Delayed::Backend::Base
 
+        def initialize(attributes = nil)
+          unless Job.column_names.include?(:distributed_request_id.to_s)
+            attributes&.delete(:distributed_request_id) if attributes&.include?(:distributed_request_id)
+            attributes&.delete(:distributed_request_id.to_s) if attributes&.include?(:distributed_request_id.to_s)
+          end
+          super
+        end
+
         if ::ActiveRecord::VERSION::MAJOR < 4 || defined?(::ActiveRecord::MassAssignmentSecurity)
           attr_accessible :priority, :run_at, :queue, :payload_object,
                           :failed_at, :locked_at, :locked_by, :handler
