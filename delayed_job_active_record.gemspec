@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |spec|
+  spec.metadata = {
+    'rubygems_mfa_required' => 'true'
+  }  
   spec.add_dependency "activerecord", [">= 3.0", "< 6.2"]
   spec.add_dependency "delayed_job",  [">= 3.0", "< 5"]
   spec.authors        = ["Brian Ryckbost", "Matt Griffin", "Erik Michaels-Ober"]
@@ -12,5 +15,5 @@ Gem::Specification.new do |spec|
   spec.name           = "delayed_job_active_record"
   spec.require_paths  = ["lib"]
   spec.summary        = "ActiveRecord backend for DelayedJob"
-  spec.version        = "4.1.5"
+  spec.version        = "4.1.6"
 end
