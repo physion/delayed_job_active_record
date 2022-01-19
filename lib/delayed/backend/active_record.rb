@@ -76,7 +76,7 @@ module Delayed
           )
 
           ## we want to be able to shut this off from the outside if it breaks
-          return rtr unless ENV['DJ_INDEX_KILLSWITCH'].nil?
+          return rtr unless ENV["DJ_INDEX_KILLSWITCH"].nil?
 
           rtr.from([Arel.sql("#{quoted_table_name} FORCE INDEX(index_delayed_jobs_lock_query_with_queue)")])
         end
