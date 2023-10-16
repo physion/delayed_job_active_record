@@ -90,7 +90,7 @@ module Delayed
         end
 
         def self.before_fork
-          ::ActiveRecord::Base.clear_all_connections!
+          ::ActiveRecord::Base.connection_handler.clear_all_connections!
         end
 
         def self.after_fork
@@ -140,8 +140,11 @@ module Delayed
         end
 
         def self.reserve_with_scope_using_default_sql(ready_scope, worker, now)
-          # This is our old fashion, tried and true, but slower lookup
-          ready_scope.limit(worker.read_ahead).detect do |job|
+          # This is our old fashion, tried and true, but possibly slower lookup
+          # Instead of reading the entire job record for our detect loop, we select only the id,
+          # and only read the full job record after we've successfully locked the job.
+          # This can have a noticable impact on large read_ahead configurations and large payload jobs.
+          ready_scope.limit(worker.read_ahead).select(:id).detect do |job|
             count = ready_scope.where(id: job.id).update_all(locked_at: now, locked_by: worker.name)
             count == 1 && job.reload
           end
@@ -197,10 +200,18 @@ module Delayed
         def self.db_time_now
           if Time.zone
             Time.zone.now
-          elsif ::ActiveRecord::Base.default_timezone == :utc
+          elsif default_timezone == :utc
             Time.now.utc
           else
             Time.now # rubocop:disable Rails/TimeZone
+          end
+        end
+
+        def self.default_timezone
+          if ::ActiveRecord.respond_to?(:default_timezone)
+            ::ActiveRecord.default_timezone
+          else
+            ::ActiveRecord::Base.default_timezone
           end
         end
 
