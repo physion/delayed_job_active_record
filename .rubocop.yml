@@ -12,7 +12,7 @@ AllCops:
     - vendor/**/*
   NewCops: enable
   SuggestExtensions: false
-  TargetRubyVersion: 2.0
+  TargetRubyVersion: 2.7
 
 #################
 # [i] Overrides #
@@ -39,7 +39,7 @@ Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
 
 Layout/LineLength:
-  Max: 120
+  Max: 125
 
 Style/SignalException:
   EnforcedStyle: only_raise
