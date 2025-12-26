@@ -6,11 +6,12 @@ gem "rake"
 
 group :test do
   platforms :jruby do
+    gem "activerecord-jdbc-adapter", github: "jruby/activerecord-jdbc-adapter"
     gem "activerecord-jdbcsqlite3-adapter", github: "jruby/activerecord-jdbc-adapter"
   end
 
   platforms :ruby, :mswin, :mingw do
-    gem "sqlite3", "~> 1.4"
+    gem "sqlite3", ">= 2.1"
   end
 
   gem "rspec", ">= 2.11"
