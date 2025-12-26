@@ -12,9 +12,10 @@ group :test do
   end
 
   platforms :ruby, :mswin, :mingw do
-    gem "mysql2", "~> 0.4.5"
-    gem "pg", "~> 0.18"
+    gem "mysql2", "~> 0.5.0"
+    gem "pg", "~> 1.1"
     gem "sqlite3"
+    gem "trilogy"
   end
 
   gem "rspec", ">= 3"

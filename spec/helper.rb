@@ -36,6 +36,11 @@ gemfile = ENV.fetch("BUNDLE_GEMFILE", nil)
 db_adapter ||= gemfile && gemfile[%r{gemfiles/(.*?)/}] && $1 # rubocop:disable Style/PerlBackrefs
 db_adapter ||= "sqlite3"
 
+if db_adapter == "trilogy" && Gem::Version.new("7.1") > Gem::Version.new(ActiveRecord::VERSION::STRING)
+  require "trilogy_adapter/connection"
+  ActiveSupport.on_load(:active_record) { extend TrilogyAdapter::Connection }
+end
+
 config = YAML.load_file("spec/database.yml")
 ActiveRecord::Base.establish_connection config[db_adapter]
 ActiveRecord::Base.logger = Delayed::Worker.logger

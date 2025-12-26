@@ -21,7 +21,7 @@ describe Delayed::Backend::ActiveRecord::Job do
       end
 
       it "raises an argument error on invalid entry" do
-        expect { configuration.reserve_sql_strategy = :invald }.to raise_error(ArgumentError)
+        expect { configuration.reserve_sql_strategy = :invalid }.to raise_error(ArgumentError)
       end
     end
   end
@@ -104,6 +104,19 @@ describe Delayed::Backend::ActiveRecord::Job do
       Time.zone = "Arizona"
       use_default_timezone(:local)
       expect(Delayed::Backend::ActiveRecord::Job.db_time_now.zone).to eq("MST")
+    end
+  end
+
+  describe "before_fork" do
+    it "clears all connections connection" do
+      allow(ActiveRecord::Base.connection_handler).to receive(:clear_all_connections!)
+      Delayed::Backend::ActiveRecord::Job.before_fork
+
+      if Gem::Version.new("7.1.0") <= Gem::Version.new(ActiveRecord::VERSION::STRING)
+        expect(ActiveRecord::Base.connection_handler).to have_received(:clear_all_connections!).with(:all)
+      else
+        expect(ActiveRecord::Base.connection_handler).to have_received(:clear_all_connections!)
+      end
     end
   end
 
