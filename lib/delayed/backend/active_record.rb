@@ -83,8 +83,12 @@ module Delayed
             worker_name
           )
 
-          ## we want to be able to shut this off from the outside if it breaks
+          # We want to be able to shut this off from the outside if it breaks.
           return rtr unless ENV["DJ_INDEX_KILLSWITCH"].nil?
+
+          # FORCE INDEX is MySQL-only; avoid applying it on other adapters (e.g., SQLite).
+          mysql_adapters = ["MySQL", "Mysql2", "Trilogy"]
+          return rtr unless mysql_adapters.include?(connection.adapter_name)
 
           rtr.from([Arel.sql("#{quoted_table_name} FORCE INDEX(index_delayed_jobs_lock_query_with_queue)")])
         end
